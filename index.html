@@ -143,62 +143,56 @@
     </a-scene>
 
     <script>
-      // --- Lógica para el permiso de cámara ---
-      const permissionMessage = document.querySelector('#ar-camera-permission-message');
-      const permissionButton = document.querySelector('#ar-camera-permission-button');
+    // --- Lógica para el permiso de cámara ---
+    // (Esta parte está bien como está)
+    const permissionMessage = document.querySelector('#ar-camera-permission-message');
+    const permissionButton = document.querySelector('#ar-camera-permission-button');
 
-      // Escuchamos el evento 'arReady' de Mind-AR para ocultar el mensaje de permiso
-      AFRAME.scenes[0].addEventListener('arReady', () => {
+    AFRAME.scenes[0].addEventListener('arReady', () => {
         permissionMessage.classList.remove('show');
-      });
-
-      // Si el navegador pide permiso automáticamente, este evento no se usará.
-      // Pero es un buen respaldo para asegurar que el usuario interactúe.
-      permissionButton.addEventListener('click', () => {
-        // En algunos dispositivos, al hacer clic ya se activa el permiso del navegador.
-        // Si no, Mind-AR intentará activarlo de nuevo al iniciar.
+    });
+    permissionButton.addEventListener('click', () => {
         permissionMessage.classList.remove('show');
-      });
-
-      // Mostrar el mensaje de permiso si la escena no se inicia de inmediato (algunos navegadores)
-      setTimeout(() => {
+    });
+    setTimeout(() => {
         if (!AFRAME.scenes[0].is('arReady')) {
-          permissionMessage.classList.add('show');
+        permissionMessage.classList.add('show');
         }
-      }, 1000); // Dar un segundo a A-Frame para intentar iniciar
+    }, 1000); 
 
-      // --- SCRIPT PARA CARGAR DATOS DINÁMICOS Y CLICKS ---
-      document.addEventListener('DOMContentLoaded', () => {
+    // --- SCRIPT PARA CARGAR DATOS DINÁMICOS Y CLICKS ---
+    document.addEventListener('DOMContentLoaded', () => {
+        
         // --- 1. La "Mini Base de Datos" de Perfiles ---
         const perfiles = {
-          "yan": {
+        "yan": {
             nombre: "YAN JOSUE TEPANCLA MARTINEZ",
             puesto: "Desarrollo de Software",
             foto: "./assets/fotos/yan.jpg",
             enlaceWeb: "https://aureo-systems.com/",
             enlaceRedes: "https://www.facebook.com/aureosystems.mx/"
-          },
-          "sebastian": {
+        },
+        "sebastian": {
             nombre: "Sebastián Pérez",
             puesto: "Diseñador UX/UI",
             foto: "./assets/fotos/sebastian.jpg",
             enlaceWeb: "https://aureo-systems.com/",
             enlaceRedes: "https://www.instagram.com/aureosystems.mx/"
-          },
-          "cesar": {
+        },
+        "cesar": {
             nombre: "Cesar López",
             puesto: "Soporte Técnico Senior",
             foto: "./assets/fotos/cesar.jpg",
             enlaceWeb: "https://aureo-systems.com/",
             enlaceRedes: "https://twitter.com/aureosystems_mx"
-          },
-          "default": {
+        },
+        "default": {
             nombre: "Aureo Systems",
             puesto: "Contacto General",
             foto: "./assets/fotos/default-aureo.jpg",
             enlaceWeb: "https://aureo-systems.com/",
             enlaceRedes: "https://linktr.ee/aureosystems"
-          }
+        }
         };
 
         // --- 2. Lógica para obtener el perfil ---
@@ -211,29 +205,37 @@
 
         // --- 4. Asignar los datos a los elementos 3D cuando la escena esté lista ---
         const scene = document.querySelector('a-scene');
+        
+        // ¡¡ESCUCHAMOS EL EVENTO 'LOADED'!!
         scene.addEventListener('loaded', () => {
-          document.querySelector('#ar-profile-pic').setAttribute('material', 'src', perfil.foto);
-          document.querySelector('#ar-profile-name').setAttribute('value', perfil.nombre);
-          document.querySelector('#ar-profile-title').setAttribute('value', perfil.puesto);
-        });
+        
+        // Bloque 4: Asignar datos (Esto ya lo tenías bien)
+        document.querySelector('#ar-profile-pic').setAttribute('material', 'src', perfil.foto);
+        document.querySelector('#ar-profile-name').setAttribute('value', perfil.nombre);
+        document.querySelector('#ar-profile-title').setAttribute('value', perfil.puesto);
 
         // --- 5. Lógica para los clics en los botones 3D ---
+        // ¡¡ESTE BLOQUE AHORA ESTÁ DENTRO DEL 'LOADED'!!
+        
         const arBotonContacto = document.querySelector('#ar-boton-contacto');
         const arBotonWeb = document.querySelector('#ar-boton-web');
         const arBotonRedes = document.querySelector('#ar-boton-redes');
 
         arBotonContacto.addEventListener('click', () => {
-          window.location.href = enlaceVCF;
+            window.location.href = enlaceVCF;
         });
 
         arBotonWeb.addEventListener('click', () => {
-          window.open(perfil.enlaceWeb, '_blank');
+            window.open(perfil.enlaceWeb, '_blank');
         });
 
         arBotonRedes.addEventListener('click', () => {
-          window.open(perfil.enlaceRedes, '_blank');
+            window.open(perfil.enlaceRedes, '_blank');
         });
-      });
+        
+        }); // <-- FIN DEL SCENE.ADDHANDLEEVENTLISTENER
+        
+    }); // <-- FIN DEL DOMCONTENTLOADED
     </script>
   </body>
 </html>
