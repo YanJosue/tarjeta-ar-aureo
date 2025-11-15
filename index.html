@@ -235,21 +235,24 @@
             const arBotonRedes = document.querySelector('#ar-boton-redes');
 
             if (arBotonContacto) {
-              arBotonContacto.addEventListener('click', () => {
+                // CAMBIO: de 'click' a 'mousedown'
+                arBotonContacto.addEventListener('mousedown', () => {
                 window.location.href = enlaceVCF;
-              });
+                });
             }
 
             if (arBotonWeb) {
-              arBotonWeb.addEventListener('click', () => {
+                // CAMBIO: de 'click' a 'mousedown'
+                arBotonWeb.addEventListener('mousedown', () => {
                 window.open(perfil.enlaceWeb, '_blank');
-              });
+                });
             }
 
             if (arBotonRedes) {
-              arBotonRedes.addEventListener('click', () => {
+                // CAMBIO: de 'click' a 'mousedown'
+                arBotonRedes.addEventListener('mousedown', () => {
                 window.open(perfil.enlaceRedes, '_blank');
-              });
+                });
             }
             
           }); // <-- FIN DEL SCENE.ADDHANDLEEVENTLISTENER
