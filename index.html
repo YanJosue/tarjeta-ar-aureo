@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tarjeta AR</title>
+
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+      /* Estilos básicos para la pantalla de carga de MindAR */
+      body { margin: 0; overflow: hidden; }
+      #ar-camera-permission-message {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: sans-serif;
+        font-size: 1.2em;
+        text-align: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.5s ease-in-out;
+      }
+      #ar-camera-permission-message.show {
+        opacity: 1;
+        pointer-events: all;
+      }
+      #ar-camera-permission-message button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin-top: 20px;
+        font-size: 1em;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="ar-camera-permission-message">
+      <p>Necesitamos acceso a tu cámara para la Realidad Aumentada.</p>
+      <button id="ar-camera-permission-button">Permitir Cámara</button>
+    </div>
+
+    <a-scene
+      mindar-image="imageTargetSrc: ./assets/marcador.mind; maxTrack: 1; uiScanning: yes;"
+      color-management="true"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+    >
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-plane
+          position="0 0 0"
+          width="1"
+          height="1.6"
+          color="#FFFFFF"
+          material="shader: standard; metalness: 0.1; roughness: 0.8;"
+          shadow
+        ></a-plane>
+
+        <a-circle
+          id="ar-profile-pic"
+          position="0 0.6 0.01"
+          radius="0.35"
+          color="#EEEEEE"
+          material="src: ; shader: flat;" 
+          shadow
+        ></a-circle>
+
+        <a-text
+          id="ar-profile-name"
+          value="Cargando..."
+          align="center"
+          position="0 0.25 0.01"
+          width="1"
+          color="#333333"
+        ></a-text>
+
+        <a-text
+          id="ar-profile-title"
+          value="..."
+          align="center"
+          position="0 0.1 0.01"
+          width="0.8"
+          color="#007aff"
+        ></a-text>
+
+        <a-entity position="0 -0.4 0.01">
+          <a-plane
+            id="ar-boton-contacto"
+            class="clickable-ar"
+            position="0 0.2 0"
+            width="0.8"
+            height="0.25"
+            color="#f8d766" 
+            material="shader: standard; metalness: 0.1; roughness: 0.8;"
+            shadow
+          >
+            <a-text value="Guardar Contacto" align="center" color="#333333" width="2" position="0 0 0.01"></a-text>
+            </a-plane>
+
+          <a-plane
+            id="ar-boton-web"
+            class="clickable-ar"
+            position="0 -0.05 0"
+            width="0.8"
+            height="0.25"
+            color="#F0F2F5"
+            material="shader: standard; metalness: 0.1; roughness: 0.8;"
+            shadow
+          >
+            <a-text value="Visitar Sitio Web" align="center" color="#333333" width="2" position="0 0 0.01"></a-text>
+             </a-plane>
+
+          <a-plane
+            id="ar-boton-redes"
+            class="clickable-ar"
+            position="0 -0.3 0"
+            width="0.8"
+            height="0.25"
+            color="#F0F2F5"
+            material="shader: standard; metalness: 0.1; roughness: 0.8;"
+            shadow
+          >
+            <a-text value="Nuestras Redes" align="center" color="#333333" width="2" position="0 0 0.01"></a-text>
+             </a-plane>
+        </a-entity>
+        </a-entity>
+    </a-scene>
+
+    <script>
+      // --- Lógica para el permiso de cámara ---
+      const permissionMessage = document.querySelector('#ar-camera-permission-message');
+      const permissionButton = document.querySelector('#ar-camera-permission-button');
+
+      // Escuchamos el evento 'arReady' de Mind-AR para ocultar el mensaje de permiso
+      AFRAME.scenes[0].addEventListener('arReady', () => {
+        permissionMessage.classList.remove('show');
+      });
+
+      // Si el navegador pide permiso automáticamente, este evento no se usará.
+      // Pero es un buen respaldo para asegurar que el usuario interactúe.
+      permissionButton.addEventListener('click', () => {
+        // En algunos dispositivos, al hacer clic ya se activa el permiso del navegador.
+        // Si no, Mind-AR intentará activarlo de nuevo al iniciar.
+        permissionMessage.classList.remove('show');
+      });
+
+      // Mostrar el mensaje de permiso si la escena no se inicia de inmediato (algunos navegadores)
+      setTimeout(() => {
+        if (!AFRAME.scenes[0].is('arReady')) {
+          permissionMessage.classList.add('show');
+        }
+      }, 1000); // Dar un segundo a A-Frame para intentar iniciar
+
+      // --- SCRIPT PARA CARGAR DATOS DINÁMICOS Y CLICKS ---
+      document.addEventListener('DOMContentLoaded', () => {
+        // --- 1. La "Mini Base de Datos" de Perfiles ---
+        const perfiles = {
+          "yan": {
+            nombre: "YAN JOSUE TEPANCLA MARTINEZ",
+            puesto: "Desarrollo de Software",
+            foto: "./assets/fotos/yan.jpg",
+            enlaceWeb: "https://aureo-systems.com/",
+            enlaceRedes: "https://www.facebook.com/aureosystems.mx/"
+          },
+          "sebastian": {
+            nombre: "Sebastián Pérez",
+            puesto: "Diseñador UX/UI",
+            foto: "./assets/fotos/sebastian.jpg",
+            enlaceWeb: "https://aureo-systems.com/",
+            enlaceRedes: "https://www.instagram.com/aureosystems.mx/"
+          },
+          "cesar": {
+            nombre: "Cesar López",
+            puesto: "Soporte Técnico Senior",
+            foto: "./assets/fotos/cesar.jpg",
+            enlaceWeb: "https://aureo-systems.com/",
+            enlaceRedes: "https://twitter.com/aureosystems_mx"
+          },
+          "default": {
+            nombre: "Aureo Systems",
+            puesto: "Contacto General",
+            foto: "./assets/fotos/default-aureo.jpg",
+            enlaceWeb: "https://aureo-systems.com/",
+            enlaceRedes: "https://linktr.ee/aureosystems"
+          }
+        };
+
+        // --- 2. Lógica para obtener el perfil ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const user = urlParams.get('user') || 'default';
+        const perfil = perfiles[user] || perfiles["default"];
+
+        // --- 3. Construir la ruta al VCF ---
+        const enlaceVCF = `./assets/contactos/${user}.vcf`;
+
+        // --- 4. Asignar los datos a los elementos 3D cuando la escena esté lista ---
+        const scene = document.querySelector('a-scene');
+        scene.addEventListener('loaded', () => {
+          document.querySelector('#ar-profile-pic').setAttribute('material', 'src', perfil.foto);
+          document.querySelector('#ar-profile-name').setAttribute('value', perfil.nombre);
+          document.querySelector('#ar-profile-title').setAttribute('value', perfil.puesto);
+        });
+
+        // --- 5. Lógica para los clics en los botones 3D ---
+        const arBotonContacto = document.querySelector('#ar-boton-contacto');
+        const arBotonWeb = document.querySelector('#ar-boton-web');
+        const arBotonRedes = document.querySelector('#ar-boton-redes');
+
+        arBotonContacto.addEventListener('click', () => {
+          window.location.href = enlaceVCF;
+        });
+
+        arBotonWeb.addEventListener('click', () => {
+          window.open(perfil.enlaceWeb, '_blank');
+        });
+
+        arBotonRedes.addEventListener('click', () => {
+          window.open(perfil.enlaceRedes, '_blank');
+        });
+      });
+    </script>
+  </body>
+</html>
