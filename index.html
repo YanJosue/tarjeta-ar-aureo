@@ -143,24 +143,32 @@
     </a-scene>
 
     <script>
-      // --- Lógica para el permiso de cámara ---
-      const permissionMessage = document.querySelector('#ar-camera-permission-message');
-      const permissionButton = document.querySelector('#ar-camera-permission-button');
-
-      AFRAME.scenes[0].addEventListener('arReady', () => {
-        permissionMessage.classList.remove('show');
-      });
-      permissionButton.addEventListener('click', () => {
-        permissionMessage.classList.remove('show');
-      });
-      setTimeout(() => {
-        if (!AFRAME.scenes[0].is('arReady')) {
-          permissionMessage.classList.add('show');
-        }
-      }, 1000); 
-
-      // --- SCRIPT PARA CARGAR DATOS DINÁMICOS Y CLICKS ---
+      // ¡¡ESCUCHAMOS EL EVENTO 'DOMCONTENTLOADED' PRIMERO!!
       document.addEventListener('DOMContentLoaded', () => {
+
+        // --- Lógica para el permiso de cámara ---
+        const permissionMessage = document.querySelector('#ar-camera-permission-message');
+        const permissionButton = document.querySelector('#ar-camera-permission-button');
+
+        // Escuchamos el evento 'arReady' de Mind-AR para ocultar el mensaje de permiso
+        // Usamos scenes[0] porque sabemos que es la única escena
+        if (AFRAME.scenes.length > 0) {
+            AFRAME.scenes[0].addEventListener('arReady', () => {
+              permissionMessage.classList.remove('show');
+            });
+        }
+
+        permissionButton.addEventListener('click', () => {
+          permissionMessage.classList.remove('show');
+        });
+
+        setTimeout(() => {
+          if (AFRAME.scenes.length > 0 && !AFRAME.scenes[0].is('arReady')) {
+            permissionMessage.classList.add('show');
+          }
+        }, 1000); 
+
+        // --- SCRIPT PARA CARGAR DATOS DINÁMICOS Y CLICKS ---
         
         // --- 1. La "Mini Base de Datos" de Perfiles ---
         const perfiles = {
@@ -192,6 +200,7 @@
             enlaceWeb: "https://aureo-systems.com/",
             enlaceRedes: "https://linktr.ee/aureosystems"
           }
+          // ... (¡Agrega aquí a tus otros 7 empleados!)
         };
 
         // --- 2. Lógica para obtener el perfil ---
@@ -205,37 +214,46 @@
         // --- 4. Asignar los datos a los elementos 3D cuando la escena esté lista ---
         const scene = document.querySelector('a-scene');
         
-        // ¡¡ESCUCHAMOS EL EVENTO 'LOADED'!!
-        // Todo el código que interactúa con la escena 3D debe ir DENTRO de aquí.
-        scene.addEventListener('loaded', () => {
-          
-          // Bloque 4: Asignar datos
-          document.querySelector('#ar-profile-pic').setAttribute('material', 'src', perfil.foto);
-          document.querySelector('#ar-profile-name').setAttribute('value', perfil.nombre);
-          document.querySelector('#ar-profile-title').setAttribute('value', perfil.puesto);
+        if (scene) {
+          scene.addEventListener('loaded', () => {
+            
+            // Bloque 4: Asignar datos
+            const profilePicEl = document.querySelector('#ar-profile-pic');
+            const profileNameEl = document.querySelector('#ar-profile-name');
+            const profileTitleEl = document.querySelector('#ar-profile-title');
 
-          // --- 5. Lógica para los clics en los botones 3D ---
-          // ¡¡ESTE BLOQUE AHORA ESTÁ DENTRO DEL 'LOADED'!!
-          
-          const arBotonContacto = document.querySelector('#ar-boton-contacto');
-          const arBotonWeb = document.querySelector('#ar-boton-web');
-          const arBotonRedes = document.querySelector('#ar-boton-redes');
+            if (profilePicEl) profilePicEl.setAttribute('material', 'src', perfil.foto);
+            if (profileNameEl) profileNameEl.setAttribute('value', perfil.nombre);
+            if (profileTitleEl) profileTitleEl.setAttribute('value', perfil.puesto);
 
-          arBotonContacto.addEventListener('click', () => {
-            window.location.href = enlaceVCF;
-          });
+            // --- 5. Lógica para los clics en los botones 3D ---
+            const arBotonContacto = document.querySelector('#ar-boton-contacto');
+            const arBotonWeb = document.querySelector('#ar-boton-web');
+            const arBotonRedes = document.querySelector('#ar-boton-redes');
 
-          arBotonWeb.addEventListener('click', () => {
-            window.open(perfil.enlaceWeb, '_blank');
-          });
+            if (arBotonContacto) {
+              arBotonContacto.addEventListener('click', () => {
+                window.location.href = enlaceVCF;
+              });
+            }
 
-          arBotonRedes.addEventListener('click', () => {
-            window.open(perfil.enlaceRedes, '_blank');
-          });
-          
-        }); // <-- FIN DEL SCENE.ADDHANDLEEVENTLISTENER
+            if (arBotonWeb) {
+              arBotonWeb.addEventListener('click', () => {
+                window.open(perfil.enlaceWeb, '_blank');
+              });
+            }
+
+            if (arBotonRedes) {
+              arBotonRedes.addEventListener('click', () => {
+                window.open(perfil.enlaceRedes, '_blank');
+              });
+            }
+            
+          }); // <-- FIN DEL SCENE.ADDHANDLEEVENTLISTENER
+        } // <-- FIN DEL IF (SCENE)
         
       }); // <-- FIN DEL DOMCONTENTLOADED
     </script>
+
   </body>
 </html>
