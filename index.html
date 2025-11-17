@@ -2,47 +2,26 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tarjeta AR</title>
+    <title>Tarjeta AR Aureo</title>
 
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
     <style>
-      /* Estilos básicos para la pantalla de carga de MindAR */
       body { margin: 0; overflow: hidden; }
+      /* Estilo del mensaje de permiso */
       #ar-camera-permission-message {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.8);
-        color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        font-family: sans-serif;
-        font-size: 1.2em;
-        text-align: center;
-        z-index: 1000;
-        opacity: 0;
-        pointer-events: none;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); color: white;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        font-family: sans-serif; font-size: 1.2em; text-align: center;
+        z-index: 1000; opacity: 0; pointer-events: none;
         transition: opacity 0.5s ease-in-out;
       }
-      #ar-camera-permission-message.show {
-        opacity: 1;
-        pointer-events: all;
-      }
+      #ar-camera-permission-message.show { opacity: 1; pointer-events: all; }
       #ar-camera-permission-message button {
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        margin-top: 20px;
-        font-size: 1em;
-        cursor: pointer;
+        background: #007bff; color: white; border: none; padding: 10px 20px;
+        border-radius: 5px; margin-top: 20px; font-size: 1em; cursor: pointer;
       }
     </style>
   </head>
@@ -60,27 +39,39 @@
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: false"
     >
-    <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" 
-    raycaster="far: 10000; objects: .clickable-ar">
-    </a-camera>
+      
+      <a-assets>
+        <img id="tex-foto-default" src="./assets/fotos/default-aureo.jpg" />
+        <img id="tex-fondo-tarjeta" src="./assets/texturas/aureo-systems-fondo.png" />
+        <img id="tex-btn-contacto" src="./assets/texturas/boton-contacto.png" />
+        <img id="tex-btn-web" src="./assets/texturas/boton-web.png" />
+        <img id="tex-btn-redes" src="./assets/texturas/boton-redes.png" />
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="enabled: false" 
+                raycaster="objects: .clickable-ar; far: 10000; interval: 100;" 
+                cursor="fuse: false; rayOrigin: mouse;">
+      </a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0">
+        
         <a-plane
+          id="ar-card-bg"
+          src="#tex-fondo-tarjeta"
           position="0 0 0"
           width="1"
           height="1.6"
-          color="#FFFFFF"
-          material="shader: standard; metalness: 0.1; roughness: 0.8;"
-          shadow
+          transparent="true"
+          opacity="1"
+          shader="flat"
         ></a-plane>
 
         <a-circle
           id="ar-profile-pic"
+          src="#tex-foto-default"
           position="0 0.6 0.01"
-          radius="0.20"
-          color="#EEEEEE"
-          material="src: ; shader: flat;" 
-          shadow
+          radius="0.35"
+          shader="flat"
         ></a-circle>
 
         <a-text
@@ -88,7 +79,7 @@
           value="Cargando..."
           align="center"
           position="0 0.25 0.01"
-          width="1"
+          width="1.8"
           color="#333333"
         ></a-text>
 
@@ -97,82 +88,74 @@
           value="..."
           align="center"
           position="0 0.1 0.01"
-          width="0.8"
+          width="1.2"
           color="#007aff"
         ></a-text>
 
         <a-entity position="0 -0.4 0.01">
+          
           <a-plane
             id="ar-boton-contacto"
             class="clickable-ar"
+            src="#tex-btn-contacto"
+            transparent="true"
             position="0 0.2 0"
             width="0.8"
-            height="0.15"
-            color="#f8d766" 
-            material="shader: standard; metalness: 0.1; roughness: 0.8;"
-            shadow
+            height="0.25"
           >
-            <a-text value="Guardar Contacto" align="center" color="#333333" width="2" position="0 0 0.01"></a-text>
-            </a-plane>
+             <a-text value="Guardar Contacto" align="center" color="#000" width="2" position="0 0 0.01"></a-text>
+          </a-plane>
 
           <a-plane
             id="ar-boton-web"
             class="clickable-ar"
-            position="0 -0.05 0"
+            src="#tex-btn-web"
+            transparent="true"
+            position="0 -0.08 0"
             width="0.8"
-            height="0.15"
-            color="#F0F2F5"
-            material="shader: standard; metalness: 0.1; roughness: 0.8;"
-            shadow
+            height="0.25"
           >
-            <a-text value="Visitar Sitio Web" align="center" color="#333333" width="2" position="0 0 0.01"></a-text>
-             </a-plane>
+             <a-text value="Visitar Sitio Web" align="center" color="#000" width="2" position="0 0 0.01"></a-text>
+          </a-plane>
 
           <a-plane
             id="ar-boton-redes"
             class="clickable-ar"
-            position="0 -0.3 0"
+            src="#tex-btn-redes"
+            transparent="true"
+            position="0 -0.35 0"
             width="0.8"
-            height="0.15"
-            color="#F0F2F5"
-            material="shader: standard; metalness: 0.1; roughness: 0.8;"
-            shadow
+            height="0.25"
           >
-            <a-text value="Nuestras Redes" align="center" color="#333333" width="2" position="0 0 0.01"></a-text>
-             </a-plane>
+             <a-text value="Nuestras Redes" align="center" color="#000" width="2" position="0 0 0.01"></a-text>
+          </a-plane>
+
         </a-entity>
-        </a-entity>
+      </a-entity>
     </a-scene>
 
     <script>
-      // ¡¡ESCUCHAMOS EL EVENTO 'DOMCONTENTLOADED' PRIMERO!!
       document.addEventListener('DOMContentLoaded', () => {
 
-        // --- Lógica para el permiso de cámara ---
+        // --- Lógica de Permisos ---
         const permissionMessage = document.querySelector('#ar-camera-permission-message');
         const permissionButton = document.querySelector('#ar-camera-permission-button');
 
-        // Escuchamos el evento 'arReady' de Mind-AR para ocultar el mensaje de permiso
-        // Usamos scenes[0] porque sabemos que es la única escena
         if (AFRAME.scenes.length > 0) {
             AFRAME.scenes[0].addEventListener('arReady', () => {
               permissionMessage.classList.remove('show');
             });
         }
-
-        permissionButton.addEventListener('mousedown', () => {
+        permissionButton.addEventListener('click', () => {
           permissionMessage.classList.remove('show');
         });
-
         setTimeout(() => {
           if (AFRAME.scenes.length > 0 && !AFRAME.scenes[0].is('arReady')) {
             permissionMessage.classList.add('show');
           }
         }, 1000); 
 
-        // --- SCRIPT PARA CARGAR DATOS DINÁMICOS Y CLICKS ---
-        
-        // --- 1. La "Mini Base de Datos" de Perfiles ---
+        // --- DATOS DE LOS EMPLEADOS ---
         const perfiles = {
           "yan": {
             nombre: "YAN JOSUE TEPANCLA MARTINEZ",
@@ -188,13 +171,7 @@
             enlaceWeb: "https://aureo-systems.com/",
             enlaceRedes: "https://www.instagram.com/aureosystems.mx/"
           },
-          "cesar": {
-            nombre: "Cesar López",
-            puesto: "Soporte Técnico Senior",
-            foto: "./assets/fotos/cesar.jpg",
-            enlaceWeb: "https://aureo-systems.com/",
-            enlaceRedes: "https://twitter.com/aureosystems_mx"
-          },
+           // ... añade aquí los demás
           "default": {
             nombre: "Aureo Systems",
             puesto: "Contacto General",
@@ -202,24 +179,20 @@
             enlaceWeb: "https://aureo-systems.com/",
             enlaceRedes: "https://linktr.ee/aureosystems"
           }
-          // ... (¡Agrega aquí a tus otros 7 empleados!)
         };
 
-        // --- 2. Lógica para obtener el perfil ---
+        // --- Lógica Principal ---
         const urlParams = new URLSearchParams(window.location.search);
         const user = urlParams.get('user') || 'default';
         const perfil = perfiles[user] || perfiles["default"];
-
-        // --- 3. Construir la ruta al VCF ---
         const enlaceVCF = `./assets/contactos/${user}.vcf`;
 
-        // --- 4. Asignar los datos a los elementos 3D cuando la escena esté lista ---
         const scene = document.querySelector('a-scene');
         
         if (scene) {
           scene.addEventListener('loaded', () => {
             
-            // Bloque 4: Asignar datos
+            // Cargar datos visuales
             const profilePicEl = document.querySelector('#ar-profile-pic');
             const profileNameEl = document.querySelector('#ar-profile-name');
             const profileTitleEl = document.querySelector('#ar-profile-title');
@@ -228,36 +201,33 @@
             if (profileNameEl) profileNameEl.setAttribute('value', perfil.nombre);
             if (profileTitleEl) profileTitleEl.setAttribute('value', perfil.puesto);
 
-            // --- 5. Lógica para los clics en los botones 3D ---
-            
+            // --- INTERACCIÓN BOTONES (Corrección Final) ---
             const arBotonContacto = document.querySelector('#ar-boton-contacto');
             const arBotonWeb = document.querySelector('#ar-boton-web');
             const arBotonRedes = document.querySelector('#ar-boton-redes');
 
-            // Usamos 'mousedown' en lugar de 'click' para mejor respuesta táctil
+            // Usamos 'mousedown' y 'window.location.href' para máxima compatibilidad
             if (arBotonContacto) {
-                arBotonContacto.addEventListener('mousedown', () => {
-                    window.location.href = enlaceVCF;
-                });
+              arBotonContacto.addEventListener('mousedown', () => {
+                window.location.href = enlaceVCF;
+              });
             }
 
             if (arBotonWeb) {
-                arBotonWeb.addEventListener('mousedown', () => {
-                    window.open(perfil.enlaceWeb, '_blank');
-                });
+              arBotonWeb.addEventListener('mousedown', () => {
+                window.location.href = perfil.enlaceWeb;
+              });
             }
 
             if (arBotonRedes) {
-                arBotonRedes.addEventListener('mousedown', () => {
-                    window.open(perfil.enlaceRedes, '_blank');
-                });
+              arBotonRedes.addEventListener('mousedown', () => {
+                window.location.href = perfil.enlaceRedes;
+              });
             }
             
           }); 
         } 
-        
       }); 
     </script>
-
   </body>
 </html>
